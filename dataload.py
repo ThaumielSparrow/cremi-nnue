@@ -12,7 +12,7 @@ class LoadData(Dataset):
         self.seg = os.listdir(seg_dir)
 
     def __len__(self):
-        return len(self.images)
+        return len(self.em)
 
     def __getitem__(self, idx):
         em_path = os.path.join(self.em_dir, self.em[idx])
