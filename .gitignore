@@ -2,6 +2,8 @@ __pycache__/
 
 data/
 samples/
+saved_images/
 
 *.png
 *.hdf
+*.tar

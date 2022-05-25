@@ -18,11 +18,11 @@ from utils import (
 # Hyperparameters
 LEARNING_RATE = 1e-4
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-BATCH_SIZE = 32
-NUM_EPOCHS = 100
+BATCH_SIZE = 16
+NUM_EPOCHS = 3
 NUM_WORKERS = 2
-IMAGE_HEIGHT = 1250
-IMAGE_WIDTH = 1250
+IMAGE_HEIGHT = 200
+IMAGE_WIDTH = 200
 PIN_MEMORY = True
 LOAD_MODEL = False
 
@@ -59,7 +59,7 @@ def main():
             A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
             A.Rotate(limit=35, p=1.0),
             A.HorizontalFlip(p=0.5),
-            A.VerticalFlip(p=0.5),
+            A.VerticalFlip(p=0.1),
             A.Normalize(
                 mean=[0.0, 0.0, 0.0],
                 std=[1.0, 1.0, 1.0],
@@ -82,7 +82,7 @@ def main():
     )
 
     model = UNet(in_chan=3, out_chan=1).to(DEVICE)
-    loss_fn = nn.BCEWithLogitsLoss() # Use CSross-Entropy loss if output desires multiple channels
+    loss_fn = nn.BCEWithLogitsLoss() # Use Cross-Entropy loss if output desires multiple channels
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
     train_loader, val_loader = get_loaders(
@@ -97,6 +97,11 @@ def main():
         PIN_MEMORY
     )
 
+    if LOAD_MODEL:
+        load_checkpoint(torch.load('checkpoint.pth.tar'), model)
+
+
+    check_accuracy(val_loader, model, device=DEVICE)
     scaler = torch.cuda.amp.GradScaler()
 
     for epoch in range(NUM_EPOCHS):

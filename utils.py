@@ -4,9 +4,11 @@ from dataload import LoadData
 from torch.utils.data import DataLoader
 
 def save_checkpoint(state, filename='checkpoint.pth.tar'):
+    print('=> Current state saved')
     torch.save(state, filename)
 
 def load_checkpoint(checkpoint, model):
+    print('=> Loaded state')
     model.load_state_dict(checkpoint['state_dict'])
 
 def get_loaders(
@@ -53,12 +55,13 @@ def get_loaders(
 def check_accuracy(loader, model, device='cuda'):
     num_correct=0
     num_pixels=0
+    dice_score=0
     model.eval()
 
     with torch.no_grad():
         for x, y in loader:
             x = x.to(device)
-            y = y.to(device)
+            y = y.to(device).unsqueeze(1)
             preds = torch.sigmoid(model(x))
             preds = (preds > 0.5).float()
             num_correct += (preds == y).sum()
@@ -79,6 +82,6 @@ def save_predictions_as_imgs(loader, model, dir='saved_images/', device='cuda'):
             preds = torch.sigmoid(model(x))
             preds = (preds > 0.5).float()
         torchvision.utils.save_image(preds, f'{dir}/pred_{idx}.png')
-        torchvision.utils.save_image(y.unsqueeze(1), f'{dir}/y_{idx}.png')
+        torchvision.utils.save_image(y.unsqueeze(1), f'{dir}/{idx}.png')
     
     model.train()

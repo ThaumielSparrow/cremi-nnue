@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 import sys, os
 from pathlib import Path
 from tqdm import tqdm
+import math
+import random
 
 
 class CustomErrorTypes(Exception):
@@ -85,8 +87,33 @@ class CREMI:
                         seg_savepath = f'SEG/SEG_{true_iter}.png'
                     cv.imwrite(seg_savepath, output)
                     true_iter += 1
+    
+    def test_train_split(self, train_folder, test_folder, train_volume=0.5):
+        """
+        Takes half of training dataset and uses it as evaluation metric. Percentage can be customized by passing
+        a frequency to represent the percentage of data that stays as training.
+        """
+        em_train_folder = train_folder + '/EM'
+        seg_train_folder = train_folder + '/SEG'
+        em_test_folder = test_folder + '/EM'
+        seg_test_folder = test_folder + '/SEG'
+        
+        try:
+            _, _, imgs = next(os.walk(em_train_folder))
+        except:
+            raise CustomErrorTypes('This function requires that your samplefolder and savefolder contain the folders EM and SEG')
+
+        num_imgs = len(imgs)
+        imgs_to_move = num_imgs - math.ceil(num_imgs*train_volume)
+
+        idx_to_remove = random.sample(range(num_imgs), imgs_to_move)
+
+        for i in idx_to_remove:
+            Path(f'{em_train_folder}/EM_{i}.png').rename(f'{em_test_folder}/EM_{i}.png')
+            Path(f'{seg_train_folder}/SEG_{i}.png').rename(f'{seg_test_folder}/SEG_{i}.png')
 
 
 if __name__ == "__main__":
-    container = CREMI(samplefolder='./', savefolder='output/', autocon=True)
+    container = CREMI(samplefolder='data/test', savefolder='output/', autocon=True)
     # container.preprocess()
+    container.test_train_split(train_volume=0.75, test_folder='./data/test', train_folder='./data/train')
