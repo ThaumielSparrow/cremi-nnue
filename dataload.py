@@ -28,3 +28,9 @@ class LoadData(Dataset):
             mask = augmentations['mask']
 
         return image, mask
+
+
+
+if __name__ == "__main__":
+    dataset = LoadData(em_dir='data/train/EM', seg_dir='data/test/SEG', transform=None)
+    print(dataset)

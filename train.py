@@ -82,7 +82,7 @@ def main():
     )
 
     model = UNet(in_chan=3, out_chan=1).to(DEVICE)
-    loss_fn = nn.BCEWithLogitsLoss() # Use Cross-Entropy loss if output desires multiple channels
+    loss_fn = nn.BCEWithLogitsLoss() # Use Cross-Entropy loss and add Sigmoid operation if output desires multiple channels
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
     train_loader, val_loader = get_loaders(
