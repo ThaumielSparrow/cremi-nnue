@@ -7,3 +7,5 @@ saved_images/
 *.png
 *.hdf
 *.tar
+
+UNUSED*.*
