@@ -2,6 +2,7 @@ import os
 from PIL import Image
 from torch.utils.data import Dataset
 import numpy as np
+import matplotlib.pyplot as plt
 
 class LoadData(Dataset):
     def __init__(self, em_dir, seg_dir, transform=None):
@@ -32,5 +33,11 @@ class LoadData(Dataset):
 
 
 if __name__ == "__main__":
-    dataset = LoadData(em_dir='data/train/EM', seg_dir='data/test/SEG', transform=None)
-    print(dataset)
+    dataset = LoadData(em_dir='data/train/EM', seg_dir='data/train/SEG', transform=None)
+    im1 = dataset[0][0][:,:,1]
+    im2 = dataset[1][0][:,:,1]
+    fig, (ax1, ax2) = plt.subplots(1,2)
+    ax1.imshow(im1, cmap='gray')
+    ax2.imshow(im2, cmap='gray')
+    plt.show()
+    

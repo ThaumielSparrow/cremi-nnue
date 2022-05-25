@@ -56,6 +56,7 @@ def check_accuracy(loader, model, device='cuda'):
     num_correct=0
     num_pixels=0
     dice_score=0
+    
     model.eval()
 
     with torch.no_grad():

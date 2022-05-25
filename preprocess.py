@@ -3,7 +3,6 @@ from types import ModuleType
 import numpy as np
 import h5py
 import cv2 as cv
-import matplotlib.pyplot as plt
 import sys, os
 from pathlib import Path
 from tqdm import tqdm
@@ -69,7 +68,8 @@ class CREMI:
             with h5py.File(superset_data, 'r') as dataset:
                 z, x, y = dataset['volumes/labels/neuron_ids'].shape
 
-                for Z in tqdm(range(z)):
+                for Z in (pbar:=tqdm(range(z))):
+                    pbar.set_description('Processing HDF EM and Segmentation Masks... (3 runs total)')
                     image = dataset['volumes/raw'][Z,:,:]
                     seg = dataset['volumes/labels/neuron_ids'][Z,:,:]
                     if self.savefolder:
@@ -87,7 +87,8 @@ class CREMI:
                         seg_savepath = f'SEG/SEG_{true_iter}.png'
                     cv.imwrite(seg_savepath, output)
                     true_iter += 1
-    
+
+
     def test_train_split(self, train_folder, test_folder, train_volume=0.5):
         """
         Takes half of training dataset and uses it as evaluation metric. Percentage can be customized by passing
@@ -115,5 +116,5 @@ class CREMI:
 
 if __name__ == "__main__":
     container = CREMI(samplefolder='data/test', savefolder='output/', autocon=True)
-    # container.preprocess()
+    container.preprocess()
     container.test_train_split(train_volume=0.75, test_folder='./data/test', train_folder='./data/train')

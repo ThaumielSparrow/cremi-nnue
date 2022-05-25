@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torchvision.transforms.functional as TF
 
+
 class DoubleConv(nn.Module):
     def __init__(self, in_chan, out_chan):
         super(DoubleConv, self).__init__()

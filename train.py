@@ -1,7 +1,7 @@
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 from tqdm import tqdm
-
+from torch.utils.tensorboard import SummaryWriter
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -34,7 +34,7 @@ TEST_MASK_DIR = 'data/test/SEG/'
 
 def train(loader, model, optimizer, loss_fn, scaler):
     loop = tqdm(loader)
-
+    
     for batch_idx, (data, targets) in enumerate(loop):
         data = data.to(device=DEVICE)
         targets = targets.float().unsqueeze(1).to(device=DEVICE)
@@ -51,7 +51,6 @@ def train(loader, model, optimizer, loss_fn, scaler):
         scaler.update()
 
         loop.set_postfix(loss=loss.item())
-
 
 def main():
     train_transform = A.Compose(
